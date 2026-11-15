@@ -1,0 +1,48 @@
+#!name=Google人机功能增强
+#!desc=解决 Google 搜索频繁弹人机验证：搜索时并发尝试多个代理策略/策略组，返回最优结果。原脚本为 NobyDa 的 Google CAPTCHA 方案，本文件是给 Loon 用的转换版，并补上了 Google 官方图标。
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/89/07/2e/89072e25-d928-13d3-cf0b-225fa37d04e4/SuperG_ios26-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-0-0-85-220.png/512x512bb.jpg
+#!author=NobyDa
+#!homepage=https://github.com/NobyDa/Script
+#!date=2026-11-15
+#!category=NobyDa
+
+# ============================================================
+# Google 人机功能增强（Loon 插件）— 带图标版
+# ------------------------------------------------------------
+# 来源：NobyDa/Script 仓库的 QuantumultX/Snippet/
+# GoogleCAPTCHA.snippet（圈X重写片段）。Pen 原本用
+# script.hub 链接转成 Loon 插件导入，但转换结果不带图标，
+# 所以做了这个原生 Loon 版，只多了 #!icon，规则和脚本与
+# 原版一一对应：
+#
+#   原片段只有 1 条 script-response-body 规则（Google 搜索
+#   结果页），转成 [Script] 的 http-response；脚本本体仍
+#   指向作者 GitHub 上的 Google_CAPTCHA.js 远程文件，
+#   作者更新脚本这边自动跟随。响应是 HTML 文本，不涉及
+#   二进制，脚本行不加 binary-body-mode。
+#   MITM 域名与原片段 hostname 行一致：www.google.com*
+#   （带 * 通配，覆盖 www.google.com.hk 等地区域名，
+#   与原片段写法保持一致）
+#
+# 工作原理（作者原说明）：Google 搜索时并发使用多个代理
+# 策略、策略组尝试搜索，并返回最优结果，从而绕开单个
+# 节点 IP 被 Google 判定异常而触发的人机验证。
+# 效果取决于本地节点的数量和质量，节点太少或 IP 质量差
+# 时该弹还是会弹，不是装上就百分百没验证。
+#
+# 注意：
+#   - 这是本地文件版，不是订阅：作者日后若改了片段的规则
+#     部分，这份不会自动跟，需要喊我重做一版；脚本逻辑
+#     的更新走远程 JS，不受影响
+#   - 使用条件：Loon 开启重写 + MITM 并信任 CA 证书
+#   - 安装：先在 Loon 里删掉之前 script.hub 导入的那个
+#     同名插件（不删图标刷不出来），再用本文件链接重新添加
+# ============================================================
+
+[Script]
+
+# Google 搜索结果页：并发多策略尝试，返回最优结果
+http-response ^https:\/\/www\.google\.com(?:\.[a-z]+|)\/(?:search\?(?:|.+?&)q=|$) script-path=https://raw.githubusercontent.com/NobyDa/Script/master/Surge/JS/Google_CAPTCHA.js, requires-body=true, tag=Google搜索人机增强
+
+[MITM]
+hostname = www.google.com*

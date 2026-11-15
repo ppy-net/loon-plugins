@@ -1,0 +1,89 @@
+#!name=养基宝去广告
+#!desc=去除养基宝开屏、横幅、弹窗及信息流推广：拦截养基宝自有广告接口，并清洗混合接口返回中的广告字段。纯重写实现，不依赖任何外部脚本。
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/36/de/d936de30-801e-390c-bbc1-eefc830334dd/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg
+#!author=Amani
+#!date=2026-11-07
+#!category=去广告
+
+# ============================================================
+# 养基宝去广告（Loon 插件）
+# ------------------------------------------------------------
+# 处理范围（只针对 *.yangjibao.com，不碰其他 App）：
+#   1. 开屏 / 启动广告接口：路径含 splash、launch_ad、startup、opening_ad 等
+#   2. 广告专用接口：路径含 advert、banner、popup、promotion、marketing
+#      以及独立成段的 /ad/、-ad- 等
+#   3. 混合接口：不整条拦截，只删返回 JSON 里的广告字段
+#      （ad / ads / banner / splash / popup / promotion 等），
+#      持仓、净值、排行等业务字段原样保留
+#
+# 明确不做（网上流传的 chxm1023 版 yjb.js 不是去广告，别混淆）：
+#   - 不改 vip_label、subscribe_status、vip_expiry_date 等会员字段
+#   - 本插件只去广告，不解锁会员
+#
+# 语法说明：
+#   - 全部使用旧版重写语法（Build 729+ 通用），不使用新版脚本语法，
+#     避免旧版本 Loon 静默忽略规则、装了像没装
+#   - 纯本地重写，不引用任何外部 JS，kelee.one 之类的源站挂了也不影响
+#
+# 使用条件：
+#   - Loon 需开启「重写」，并开启 MITM、生成并完全信任 CA 证书
+#     （设置 → 通用 → 关于本机 → 证书信任设置）
+#   - 含 [Rule] 的可选部分需使用规则分流模式
+#   - 装好后从后台彻底划掉养基宝再重新打开（广告配置有缓存）
+#
+# 验证状态（2026-11-07）：
+#   - 域名依据养基宝公开接口文档核实：
+#     新接口 app-api.yangjibao.com、老接口 browser-plug-api.yangjibao.com
+#   - 已离线验证：公开文档中的全部业务接口（持仓 / 收益 / 行情 /
+#     搜索 / 账户等）均不会被下面的拦截规则误杀；广告类路径均可命中；
+#     广告字段清洗表达式已用模拟返回数据实测通过
+#   - 尚未经 Pen 真机抓包验证。若某个位置的广告还在，把 Loon 请求
+#     记录里广告出现时 yangjibao.com 域名下的请求截图发我，
+#     我按真实接口加精确规则
+# ============================================================
+
+[Rewrite]
+
+# --- 1. 开屏 / 启动广告（返回空 JSON，App 拿到空配置即跳过开屏）---
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*splash.* reject-dict
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*(launch|startup|opening)[\/_-]?ads?.* reject-dict
+
+# --- 2. 广告专用接口 ---
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*advert.* reject-dict
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*banner.* reject-dict
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*(popup|pop-up|pop_up).* reject-dict
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*(promotion|marketing).* reject-dict
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/.*[\/_-]ads?([\/_-]|\?|$).* reject-dict
+(?i)^https?:\/\/([^\/]*\.)?yangjibao\.com\/ads?([\/_-]|\?|$).* reject-dict
+
+# --- 3. 混合接口广告字段清洗（业务数据原样保留，只删广告字段）---
+# 覆盖新接口 app-api 与老接口 browser-plug-api 的全部 JSON 返回；
+# 返回体不是对象、或 data 不是对象时，表达式原样放行，不会报错拦数据。
+^https?:\/\/(app-api|browser-plug-api)\.yangjibao\.com\/ response-body-json-jq 'if type=="object" then del(.ad, .ads, .ad_info, .banner, .banners, .splash, .popup, .popups, .advert, .promotion, .promotions) else . end | if (.data|type)=="object" then del(.data.ad, .data.ads, .data.ad_info, .data.ad_list, .data.banner, .data.banners, .data.banner_list, .data.splash, .data.splash_ad, .data.launch_ad, .data.opening_ad, .data.popup, .data.popups, .data.advert, .data.promotion, .data.promotions, .data.float_ad, .data.interstitial_ad) else . end'
+
+[Rule]
+
+# --- 可选（二线）：第三方广告 SDK 域名 ---
+# 养基宝若用穿山甲 / 优量汇等 SDK 直连投放开屏，广告不走上面的
+# yangjibao.com 接口，上面的规则拦不到，需要在这一层拦 SDK 域名。
+# 注意：[Rule] 是全局生效的，下面这些虽然都是广告专用域名、
+# 不承载业务，但也会影响其他 App 的广告 SDK 请求（效果上等于
+# 顺带帮其他 App 去广告，一般无副作用；在意的话不要启用）。
+# 默认注释关闭。开屏广告还在时，把下面几行行首的 # 去掉即可。
+#
+# 穿山甲 / Pangle
+# DOMAIN-SUFFIX,pangolin-sdk-toutiao.com,REJECT
+# DOMAIN-SUFFIX,pangolin-sdk-toutiao-b.com,REJECT
+# 腾讯优量汇
+# DOMAIN,mi.gdt.qq.com,REJECT
+# DOMAIN,v.gdt.qq.com,REJECT
+# DOMAIN-SUFFIX,gdtimg.com,REJECT
+# 百度百青藤
+# DOMAIN-SUFFIX,mobads.baidu.com,REJECT
+# 快手联盟
+# DOMAIN,open.e.kuaishou.com,REJECT
+# Sigmob
+# DOMAIN-SUFFIX,sigmob.cn,REJECT
+
+[MITM]
+hostname = *.yangjibao.com
