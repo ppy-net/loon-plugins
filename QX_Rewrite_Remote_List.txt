@@ -1,0 +1,17 @@
+# Quantumult X 远程重写订阅清单（Pen 个人备份，非作者，仅方便自己恢复配置）
+# 用法：把下面 13 行整段粘贴到 Quantumult X 配置文件的 [rewrite_remote] 段下即可。
+# 每条都指向作者原地址，规则更新由作者维护、自动跟随，本文件只是清单备份。
+
+https://github.com/fmz200/wool_scripts/raw/main/QuantumultX/rewrite/split/partZ/ZhongHuaWanNianLi.snippet, tag=中华万年历@奶思, update-interval=172800, opt-parser=false, enabled=true
+https://github.com/fmz200/wool_scripts/raw/main/QuantumultX/rewrite/split/partA/iQIYI.snippet, tag=爱奇艺@奶思, update-interval=172800, opt-parser=false, enabled=true
+https://raw.githubusercontent.com/ZenmoFeiShi/Qx/main/TxvideoAD.snippet, tag=腾讯视频去广告, update-interval=172800, opt-parser=false, enabled=true
+https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Snippet/GoogleCAPTCHA.snippet, tag=Google人机功能增强@NobyDa, update-interval=86400, opt-parser=false, enabled=true
+https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/YoutubeAds.conf, tag=Youtube去广告@Maasea, update-interval=86400, opt-parser=false, enabled=true
+https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/Ximalaya.conf, tag=喜马拉雅去广告@ddgksf2013, update-interval=86400, opt-parser=false, enabled=true
+https://gist.githubusercontent.com/ddgksf2013/bb1dadbd32f67c68772caebcc70b0a33/raw/pipixia.adblock.js, tag=皮皮虾去广告@ddgksf2013, update-interval=86400, opt-parser=true, enabled=true
+https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/FakeiOSAds.conf, tag=影视去广告去广告@ddgksf2013, update-interval=86400, opt-parser=false, enabled=true
+https://raw.githubusercontent.com/Yuheng0101/X/refs/heads/main/Scripts/ChinaMobile/NoAds.js, tag=中国移动去广告@Yuheng, update-interval=86400, opt-parser=true, enabled=true
+https://ddgksf2013.top/rewrite/WeiFengAds.conf, tag=威锋去广告@ddgksf2013, update-interval=86400, opt-parser=false, enabled=true
+https://ddgksf2013.top/scripts/yangjibao.vip.js, tag=养基宝去广告@ddgksf2013, update-interval=86400, opt-parser=true, enabled=true
+https://ddgksf2013.top/rewrite/NBProAds.conf, tag=NBpro去广告@ddgksf2013, update-interval=86400, opt-parser=false, enabled=true
+https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.snippet, tag=美团去广告@ZenmoFeiShi, update-interval=86400, opt-parser=false, enabled=true
