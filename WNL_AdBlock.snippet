@@ -1,6 +1,12 @@
 #!name=中华万年历去广告
-#!desc=摘自奶思 fmz200 广告拦截合集的中华万年历部分：拦截其广告与数据统计域名（51wnl / 随身云等），纯分流拦截，不需要开 MITM。
+#!desc=v2 抓包实测版（App 10.1.0）：广告走穿山甲(Pangle)+AnyThink聚合下发，拦截其 SDK 域名；另含奶思合集的 51wnl/随身云域名。纯分流拦截，不需要开 MITM。
 
+host-keyword, pangolin-sdk-toutiao, reject
+host-keyword, pglstatp-toutiao, reject
+host-suffix, byteurl.cn, reject
+host-suffix, ctobsnssdk.com, reject
+host-suffix, anythinktech.com, reject
+host, adtrack.qianwen.com, reject
 host-keyword, lkme.cc, reject
 host-keyword, api.freed.so, reject
 host-keyword, log-dmp.suishenyun.cn, reject
