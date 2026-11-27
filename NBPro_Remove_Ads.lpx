@@ -1,0 +1,94 @@
+#!name=NBPro去广告
+#!desc=去除 NBPro 的开屏、横幅、信息流等广告：拦截第三方广告 SDK 域名，并清洗应用自身的广告配置。原插件为墨鱼 ddgksf2013 的《NBPro净化》（2026-09-19 更新，V1.0.3），本文件是给 Loon 用的转换版，规则与原版一一对应。图标取自 NB全能助手 App 本身（该 App 未上架 App Store，图标由 Pen 截图提取）。
+#!icon=https://raw.githubusercontent.com/ppy-net/loon-plugins/main/icons/NBPro_icon.svg
+#!author=ddgksf2013
+#!homepage=https://ddgksf2013.top/rewrite/NBProAds.conf
+#!date=2026-11-28
+#!category=ddgksf2013
+
+# ============================================================
+# NBPro去广告（Loon 插件）
+# ------------------------------------------------------------
+# 来源：墨鱼 ddgksf2013 的圈X重写 NBProAds.conf（2026-09-19 版）
+# 转换说明：
+#   1. 原片段 35 条 host reject（第三方广告 SDK 域名）
+#      -> 转成 [Rule] 里的 DOMAIN, ..., REJECT
+#   2. 原片段 1 条 script-response-body -> 转成 [Script] 的
+#      http-response，脚本本体仍指向作者服务器上的
+#      nbpro.ads.js，作者更新脚本这边自动跟随；该脚本只改
+#      应用广告配置接口（/nb/app）返回里的广告开关字段
+#      （广告开关、展示比例、横幅与推荐列表），不碰账号
+#   3. MITM 域名与原片段 hostname 行完全一致（含 3 个 IP）
+#
+# 注意：
+#   - 这是本地文件版，不是订阅：作者日后若改了片段的规则
+#     部分（新增/修改域名），这份不会自动跟，需要喊我重做；
+#     脚本逻辑的更新走远程 JS，不受影响
+#   - 使用条件：Loon 开启重写 + MITM 并信任 CA 证书
+# ============================================================
+
+[Rule]
+# AnyThink / fusion mediation
+DOMAIN,capsinfo.anythink.com,REJECT
+DOMAIN,showtime.anythink.com,REJECT
+DOMAIN,api.bridgeoos.com,REJECT
+DOMAIN,pitk.birdgesdk.com,REJECT
+DOMAIN,aa.birdgesdk.com,REJECT
+DOMAIN,fusion-static.oss-cn-shenzhen.aliyuncs.com,REJECT
+
+# Baidu MobAds
+DOMAIN,mobads.baidu.com,REJECT
+DOMAIN,cpu.baidu.com,REJECT
+DOMAIN,cpu-openapi.baidu.com,REJECT
+DOMAIN,mobads-pre-config.bj.bcebos.com,REJECT
+DOMAIN,mobads-pre-config.cdn.bcebos.com,REJECT
+DOMAIN,cpro.baidustatic.com,REJECT
+DOMAIN,render-server.cdn.bcebos.com,REJECT
+
+# Sigmob
+DOMAIN,adservice.sigmob.cn,REJECT
+
+# BeiZi / AdScope
+DOMAIN,api.htp.ad-scope.com.cn,REJECT
+DOMAIN,bid.ad-scope.com.cn,REJECT
+DOMAIN,api-htp.beizi.biz,REJECT
+DOMAIN,sdk.beizi.biz,REJECT
+DOMAIN,sdktmp.hubcloud.com.cn,REJECT
+
+# ZhangYu
+DOMAIN,sdk.zhangyuyidong.cn,REJECT
+DOMAIN,sdk6.zhangyuyidong.cn,REJECT
+
+# AdIntl
+DOMAIN,sdkcfg.adintl.cn,REJECT
+DOMAIN,test.s.adintl.cn,REJECT
+
+# 8ziben incentive ads
+DOMAIN,api-cfg.8ziben.com,REJECT
+DOMAIN,api-incentive.8ziben.com,REJECT
+DOMAIN,static.8ziben.com,REJECT
+
+# Tanx
+DOMAIN,opehs.tanx.com,REJECT
+DOMAIN,videoproxy.tanx.com,REJECT
+
+# Etool Ads
+DOMAIN,c.etoolads.cn,REJECT
+
+# AdWangMai
+DOMAIN,sdk.adx.adwangmai.com,REJECT
+DOMAIN,sdk-cfg.adx.adwangmai.com,REJECT
+DOMAIN,static.adwangmai.com,REJECT
+
+# Kuaishou Ads
+DOMAIN,open.e.kuaishou.com,REJECT
+DOMAIN,open.e.kuaishou.cn,REJECT
+DOMAIN,s.e.kuaishou.com,REJECT
+
+[Script]
+
+# NBPro 广告配置清洗（解密并关闭广告开关后回填）
+http-response ^https?:\/\/(?:nbtool8\.com(?::(?:9527|9666))?|124\.222\.32\.246(?::9527)?|117\.72\.39\.157(?::9527)?|cesapp\.goypzc\.cn(?::9527)?|47\.243\.71\.210(?::9527)?)\/nb\/app(?:\?.*)?$ script-path=https://ddgksf2013.top/scripts/nbpro.ads.js, requires-body=true, tag=NBPro-广告配置清洗
+
+[MITM]
+hostname = nbtool8.com, cesapp.goypzc.cn, 124.222.32.246, 117.72.39.157, 47.243.71.210
