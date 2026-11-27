@@ -1,0 +1,41 @@
+#!name=影视去广告
+#!desc=去除一类 iOS 伪装影视 App 的广告与伪装弹窗（版本提示、公告、广告位接口拦截 + 配置列表过滤）。原插件为墨鱼 ddgksf2013 的《IOS伪装影视APP净化》（2025-10-26 更新，V1.0.6），本文件是给 Loon 用的转换版。这类 App 没有统一的官方图标，故本插件无图标。
+#!author=ddgksf2013
+#!homepage=https://raw.githubusercontent.com/ddgksf2013/Rewrite/refs/heads/master/AdBlock/FakeiOSAds.conf
+#!date=2026-11-28
+#!category=ddgksf2013
+
+# ============================================================
+# 影视去广告（Loon 插件）
+# ------------------------------------------------------------
+# 来源：墨鱼 ddgksf2013 的圈X重写 FakeiOSAds.conf（V1.0.6）
+# 转换说明：
+#   1. 原片段第 2 条（version/notice/advert 接口 reject-200）
+#      -> 转成 [Rewrite] 的 reject-200，正则与原版一致
+#   2. 原片段第 1 条用的是圈X 独有的 jsonjq-response-body
+#      （jq 过滤 JSON），Loon 没有 jq 功能，无法直转；
+#      已用一段等效 JS 实现同样的过滤（删掉配置列表里
+#      keyName 含 config.ad/search/recommend 的项），JS 托管
+#      在 Pen 自己的仓库 scripts/FakeiOS_jq_filter.js
+#   3. MITM 域名与原片段 hostname 行完全一致（app.dsx.ac）
+#
+# 注意：
+#   - 这是本地文件版：作者日后若改了原片段的规则，这份不会
+#     自动跟，需要喊我同步重做（与纯远程脚本的插件不同）
+#   - 使用条件：Loon 开启重写 + MITM 并信任 CA 证书
+#   - 作者原提示：装好后若广告仍在，清一下 App 缓存或
+#     卸载重装该 App
+# ============================================================
+
+[Rewrite]
+
+# 版本检查/公告/广告位接口：直接返回空响应（原规则 reject-200）
+^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/.*?\/v\d\/(version|notice\?|top_notice\?|advert\?position=[^2]+) reject-200
+
+[Script]
+
+# 配置列表过滤（原 jsonjq 规则的 JS 等效实现）
+http-response ^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/api\/v\d\/config\/getConfigList\.do script-path=https://raw.githubusercontent.com/ppy-net/loon-plugins/main/scripts/FakeiOS_jq_filter.js, requires-body=true, tag=影视-配置列表过滤
+
+[MITM]
+hostname = app.dsx.ac
