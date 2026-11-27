@@ -15,3 +15,4 @@ https://ddgksf2013.top/rewrite/WeiFengAds.conf, tag=威锋去广告@ddgksf2013, 
 https://ddgksf2013.top/scripts/yangjibao.vip.js, tag=养基宝去广告@ddgksf2013, update-interval=86400, opt-parser=true, enabled=true
 https://ddgksf2013.top/rewrite/NBProAds.conf, tag=NBpro去广告@ddgksf2013, update-interval=86400, opt-parser=false, enabled=true
 https://raw.githubusercontent.com/ZenmoFeiShi/Qx/refs/heads/main/MT.snippet, tag=美团去广告@ZenmoFeiShi, update-interval=86400, opt-parser=false, enabled=true
+https://ddgksf2013.top/rewrite/JinShiDataAds.conf, tag=金十数据去广告@ddgksf2013, update-interval=86400, opt-parser=false, enabled=true
