@@ -1,6 +1,6 @@
 #!name=NBPro去广告
-#!desc=去除 NBPro 的开屏、横幅、信息流等广告：拦截第三方广告 SDK 域名，并清洗应用自身的广告配置。原插件为墨鱼 ddgksf2013 的《NBPro净化》（2026-09-19 更新，V1.0.3），本文件是给 Loon 用的转换版，规则与原版一一对应。该 App 未上架 App Store，图标按 App 原图重画为矢量版，存于本仓库 icons 目录。
-#!icon=https://raw.githubusercontent.com/ppy-net/loon-plugins/main/icons/NBPro_icon.svg
+#!desc=去除 NBPro 的开屏、横幅、信息流等广告：拦截第三方广告 SDK 域名，并清洗应用自身的广告配置。原插件为墨鱼 ddgksf2013 的《NBPro净化》（2026-09-19 更新，V1.0.3），本文件是给 Loon 用的转换版，规则与原版一一对应。该 App 未上架 App Store，图标为 Pen 提供的 App 原图（托管于 pixhost）。
+#!icon=https://img3.pixhost.to/images/7508/816704341_nbpro_icon.png
 #!author=ddgksf2013
 #!homepage=https://ddgksf2013.top/rewrite/NBProAds.conf
 #!date=2026-11-28
